@@ -1,0 +1,109 @@
+-- 1) Seleccionar todos los datos de la tabla alumnos:
+SELECT * FROM escuelas.alumnos;
+
+-- 2) Seleccionar solamente el legajo y el nombre de los alumnos:
+SELECT legajo, nombre FROM escuelas.alumnos;
+
+-- 3) Mostrar todos los datos de aquellos alumnos aprobados (con notas mayores o iguales a 7)
+SELECT * FROM escuelas.alumnos WHERE nota >= 7;
+
+-- 4) Mostrar el id y el nombre de aquellas escuelas cuya capacidad sea inferior a 200 (no mostrar la columna capacidad).
+SELECT id, nombre FROM escuelas.escuelas WHERE capacidad < 200;
+
+-- 5) Mostrar el nombre y la nota de aquellos alumnos cuya nota se encuentre entre 8 y 10
+SELECT legajo, nombre, nota FROM escuelas.alumnos WHERE nota >= 8 AND nota <=10;
+
+-- 6) Repetir el ejercicio anterior, utilizando BETWEEN
+SELECT legajo, nombre, nota FROM escuelas.alumnos WHERE nota BETWEEN 8 AND 10;
+
+-- 7) Mostrar el nombre, la localidad y la provincia de aquellas escuelas situadas en Buenos Aires o Jujuy
+SELECT nombre, localidad, provincia FROM escuelas.escuelas WHERE provincia IN ('Buenos Aires', 'Jujuy');
+
+-- 8) Mostrar todos los datos de los alumnos llamados Pedro González
+SELECT * FROM escuelas.alumnos WHERE nombre LIKE 'Pedro González';
+
+-- 9) Repetir el ejercicio anterior, pero con aquellos que no se llamen Pedro González
+SELECT * FROM escuelas.alumnos WHERE nombre NOT LIKE 'Pedro González';
+
+-- 10) Mostrar todos los datos de los alumnos cuyo nombre comience con R
+SELECT * FROM escuelas.alumnos WHERE nombre LIKE '%R';
+
+-- 11) Mostrar todos los datos de los alumnos cuyo nombre termine con A
+SELECT * FROM escuelas.alumnos WHERE nombre LIKE '%A';
+
+-- 12) Mostrar todos los datos de los alumnos cuyo nombre contenga una M
+SELECT * FROM escuelas.alumnos WHERE nombre LIKE '%M%';
+
+-- 13) Mostrar el legajo, el nombre del alumno y el nombre de la escuela de todos los alumnos
+SELECT a.legajo, a.nombre, e.nombre Escuela FROM escuelas.alumnos a, escuelas.escuelas e
+WHERE e.id = a.id_escuela;
+
+-- 14) Modificar el ejercicio anterior utilizando alias de columnas de modo tal que los datos se muestren de esta manera:
+SELECT a.legajo Nro Legajo, a.nombre Nombre y Apellido, e.nombre Escuela FROM escuelas.alumnos a, escuelas.escuelas e
+WHERE e.id = a.id_escuela;
+
+-- 15) Mostrar todos los alumnos, tengan o no escuela asignada.
+SELECT a.legajo Nro_Legajo, a.nombre, e.nombre Escuela
+FROM escuelas.alumnos a
+LEFT JOIN escuelas.escuelas e
+ON a.id_escuela = e.id;
+
+-- 16) Mostrar todas las escuelas con el nombre de cada alumno (aunque no tengan escuela asignada).
+SELECT e.nombre Escuela, a.nombre Alumnos
+FROM escuelas.alumnos a
+RIGHT JOIN escuelas.escuelas e
+ON a.id_escuela = e.id;
+
+-- 17) Mostrar todos los datos de los alumnos que tengan notas.
+SELECT * FROM escuelas.alumnos WHERE nota IS NOT NULL;
+
+-- 18) Mostrar todos los datos de los alumnos que no tengan notas.
+SELECT * FROM escuelas.alumnos WHERE nota IS NULL;
+
+/*19) Realizar lo siguiente:
+a. Agregar a través de Alter Table una en la tabla escuelas columna llamada “Partido”, a la derecha de Localidad con una cadena vacía como valor por defecto (armar la sentencia a través de Alter Table y ejecutar desde la consulta).
+b. Ejecutar una consulta donde se vean todos los campos para confirmar que se ha agregado el campo “partido”.
+c. Eliminar esa columna utilizando Alter Tabla, no es necesario ejecutarlo desde la consulta. */
+
+ALTER TABLE escuelas.escuelas ADD Partido VARCHAR(50);
+DESCRIBE escuelas.escuelas;
+ALTER TABLE escuelas.escuelas DROP Partido;
+
+-- 20) Agregar una nueva escuela utilizando Insert Statement (no agregar el ID). Ejecutar desde la consulta:.
+INSERT INTO  escuelas.escuelas (nombre, localidad, provincia, capacidad) VALUES(
+     "Esc. N° 2 Tomás Santa Coloma", "Capital Federal", "Buenos Aires", 250
+);
+
+-- 21) Utilizando Create Statement duplicar la tabla Alumnos. Analizar el código que se genera y responder: ¿Qué función cumple el Auto_increment de la última línea?
+CREATE TABLE escuelas.alumnoscopia LIKE escuelas.alumnos;
+INSERT INTO escuelas.alumnoscopia SELECT * FROM escuelas.alumnos;
+
+-- 22) Obtener un ranking de las primeras 3 escuelas de mayor capacidad.
+SELECT * FROM escuelas.escuelas
+ORDER BY capacidad DESC
+LIMIT 3;
+
+-- 23) Contar la cantidad de alumnos de la tabla homónima. Llamar a la columna “Cantidad de alumnos”.
+SELECT COUNT(id) as cantidad FROM escuelas.alumnos;
+
+-- 24) Repetir la consulta anterior consultando solamente cuya nota sea menor a 7.
+SELECT COUNT(id) as cantidad FROM escuelas.alumnos
+WHERE nota < 7;
+
+-- 25) Obtener la capacidad total de las escuelas de la provincia de Buenos Aires
+SELECT provincia, SUM(capacidad) FROM escuelas.escuelas
+WHERE provincia = 'Buenos Aires'
+GROUP BY provincia;
+
+-- 26) Repetir el ejercicio anterior pero solamente con las escuelas de Córdoba y Jujuy
+SELECT provincia, SUM(capacidad) FROM escuelas.escuelas
+WHERE provincia IN ('Córdoba', 'Jujuy')
+GROUP BY provincia;
+
+-- 27) Obtener el promedio de notas de los alumnos aprobados con más de 7
+SELECT AVG(nota) FROM escuelas.alumnos
+WHERE nota > 7;
+
+-- 28) Obtener la capacidad máxima y la capacidad mínima de alumnos
+SELECT MAX(capacidad), MIN(capacidad) FROM escuelas.escuelas;
+
